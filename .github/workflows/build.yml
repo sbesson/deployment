@@ -29,5 +29,5 @@ jobs:
           --exclude idr-reset-users-groups.yml
         working-directory: ansible
       - name:  Install dependencies
-        run: molecule test -s ${{ scenario }}
+        run: molecule test -s ${{ matrix.scenario }}
         working-directory: ansible
