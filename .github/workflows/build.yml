@@ -11,10 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-      - name:  Install dependencies
+      - name: Install dependencies
         run: python -mpip install "ome-ansible-molecule<0.5"
       - name: Run Ansible lint
-        run: ansible-lint -v *.yml --exclude ../kubespray/ --exclude idr-firewall.yml --exclude idr-kubernetes-apply.yml --exclude idr-reset-users-groups.yml
+        run: ansible-lint -v *.yml --exclude ../kubespray/ --exclude .roles/kubernetes --exclude idr-firewall.yml --exclude idr-kubernetes-apply.yml --exclude idr-reset-users-groups.yml
         working-directory: ansible    
   build:
     needs: lint
