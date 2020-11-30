@@ -26,6 +26,10 @@ jobs:
           - 'ftp'
     runs-on: ubuntu-18.04
     steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - name: Install dependencies
+        run: python -mpip install "ome-ansible-molecule<0.5"
       - name: Run molecule tests
         run: molecule test -s ${{ matrix.scenario }}
         working-directory: ansible
