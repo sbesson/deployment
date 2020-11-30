@@ -5,7 +5,22 @@ on:
 
 
 jobs:
+  lint:
+    name: Run lint
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - name:  Install dependencies
+        run: python -mpip install "ome-ansible-molecule<0.5"
+      - name: Run Ansible lint
+        run: ansible-lint -v *.yml "$exclude1 exclude2 exclude3 exclude4"
+        env:
+          - exclude1='--exclude ../kubespray/"
+          - exclude2="--exclude idr-firewall.yml"
+          - exclude3="--exclude idr-kubernetes-apply.yml"
+          - exclude3="--exclude idr-reset-users-groups.yml"
+        working-directory: ansible    
   build:
+    needs: lint
     name: Build
     strategy:
       matrix:
@@ -14,20 +29,6 @@ jobs:
           - 'ftp'
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-      - name:  Install dependencies
-        run: python -mpip install "ome-ansible-molecule<0.5"
-      - name:  Install dependencies
-        run: |
-          ansible-lint -v *.yml
-          --exclude ./roles/kubernetes/
-          --exclude ./vendor/
-          --exclude ../kubespray/
-          --exclude idr-firewall.yml
-          --exclude idr-kubernetes-apply.yml
-          --exclude idr-reset-users-groups.yml
-        working-directory: ansible
-      - name:  Install dependencies
+      - name: Run molecule tests
         run: molecule test -s ${{ matrix.scenario }}
         working-directory: ansible
