@@ -1,0 +1,32 @@
+name: Build
+on:
+  push:
+  pull_request:
+
+
+jobs:
+  build:
+    name: Build
+    strategy:
+      matrix:
+        scenario:
+          - 'publicidr'
+          - 'ftp'
+    runs-on: ubuntu-18.04
+  - uses: actions/checkout@v2
+  - uses: actions/setup-python@v2
+  - name:  Install dependencies
+    run: python -mpip pip install "ome-ansible-molecule<0.5" testinfra==2.1.0
+  - name:  Install dependencies
+    run: |
+      ansible-lint -v *.yml
+      --exclude ./roles/kubernetes/
+      --exclude ./vendor/
+      --exclude ../kubespray/
+      --exclude idr-firewall.yml
+      --exclude idr-kubernetes-apply.yml
+      --exclude idr-reset-users-groups.yml
+    working-directory: ansible
+  - name:  Install dependencies
+    run: molecule test -s ${{ scenario }}
+    working-directory: ansible
